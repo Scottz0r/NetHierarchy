@@ -7,4 +7,4 @@ $content = $content -replace '\$version\$', $version
 
 $content | Out-File NetHierarchy.compiled.nuspec
 
-& .\nuget.exe pack NetHierarchy.compiled.nuspec
+& nuget pack NetHierarchy.compiled.nuspec
