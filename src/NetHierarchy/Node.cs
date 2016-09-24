@@ -43,7 +43,7 @@ namespace NetHierarchy
             get { return Parent == null; }
         }
 
-        #region Constructor
+        #region Constructors
 
         #region Without Children
         public Node()
@@ -170,28 +170,86 @@ namespace NetHierarchy
         /// <summary>
         /// Filters the descendant nodes based on a predicate.
         /// </summary>
-        public IEnumerable<Node<T>> DescendantsWhere(Func<Node<T>, bool> predicate)
+        public IEnumerable<Node<T>> DescendantsWhere(Func<Node<T>, bool> Predicate)
         {
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
 
-            if (predicate(this))
+            if (Predicate(this))
                 yield return this;
 
             foreach(var child in Children)
             {
-                foreach(var result in child.DescendantsWhere(predicate))
+                foreach(var result in child.DescendantsWhere(Predicate))
                 {
                     yield return result;
                 }
             }
         }
 
+        /// <summary>
+        /// Determines wether any descendant satisifies a condition.
+        /// </summary>
+        /// <param name="Predicate">A function to test each decendant.</param>
+        public bool DescendantsAny(Func<Node<T>, bool> Predicate)
+        {
+            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+
+            if (Predicate(this))
+                return true;
+
+            foreach(var child in Children)
+            {
+                var result = child.DescendantsAny(Predicate);
+                if (result)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if the node's descendants contains the value using the default equality comparer.
+        /// </summary>
+        /// <param name="Value">The value to locate in the sequence.</param>
+        public bool DescendantsContains(T Value)
+        {
+            if (Value == null) throw new ArgumentNullException(nameof(Value));
+
+            if (this.Data.Equals(Value))
+                return true;
+
+            foreach(var child in Children)
+            {
+                var result = child.DescendantsContains(Value);
+                if (result)
+                    return true;
+            }
+
+            return false;
+        }
         #endregion
 
         #region Object Overrides
         public override string ToString()
         {
             return this.Data.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            Node<T> n = obj as Node<T>;
+            if ((object)n == null)
+                return false;
+
+            return this.Data.Equals(n.Data);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Data.GetHashCode();
         }
         #endregion
     }

@@ -239,5 +239,164 @@ namespace NetHierarchyTests
             var actual = root.DescendantsWhere(null);
             var actualList = actual.ToList();
         }
+
+        [TestMethod]
+        public void Node_DescendantsAny()
+        {
+            var root = new Node<int>(1);
+            var grandparent = new Node<int>(2);
+            var parent = new Node<int>(3);
+            var parent2 = new Node<int>(4);
+            var child = new Node<int>(5);
+
+            root.AddChild(grandparent);
+            grandparent.AddChild(parent);
+            grandparent.AddChild(parent2);
+            parent.AddChild(child);
+
+            var actual = root.DescendantsAny(x => x.Data == 2);
+
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
+        public void Node_DescendantsAny_NoMatch()
+        {
+            var root = new Node<int>(1);
+            var grandparent = new Node<int>(2);
+            var parent = new Node<int>(3);
+            var parent2 = new Node<int>(4);
+            var child = new Node<int>(5);
+
+            root.AddChild(grandparent);
+            grandparent.AddChild(parent);
+            grandparent.AddChild(parent2);
+            parent.AddChild(child);
+
+            var actual = root.DescendantsAny(x => x.Data == 1000000000);
+
+            Assert.IsFalse(actual);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Node_DescendantsAny_ArgumentNull()
+        {
+            var root = new Node<int>(1);
+
+            var actual = root.DescendantsAny(null);
+        }
+
+        [TestMethod]
+        public void Node_DescendantsContains()
+        {
+            var root = new Node<int>(1);
+            var grandparent = new Node<int>(2);
+            var parent = new Node<int>(3);
+            var parent2 = new Node<int>(4);
+            var child = new Node<int>(5);
+
+            root.AddChild(grandparent);
+            grandparent.AddChild(parent);
+            grandparent.AddChild(parent2);
+            parent.AddChild(child);
+
+            var actual = root.DescendantsContains(3);
+
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
+        public void Node_DescendantsContains_NotContains()
+        {
+            var root = new Node<int>(1);
+            var grandparent = new Node<int>(2);
+            var parent = new Node<int>(3);
+            var parent2 = new Node<int>(4);
+            var child = new Node<int>(5);
+
+            root.AddChild(grandparent);
+            grandparent.AddChild(parent);
+            grandparent.AddChild(parent2);
+            parent.AddChild(child);
+
+            var actual = root.DescendantsContains(13333337);
+
+            Assert.IsFalse(actual);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Node_DescendantsContains_ArgumentNull()
+        {
+            var root = new Node<string>("ASDF");
+
+            root.DescendantsContains(null);
+        }
+
+        #region Equals Tests
+        [TestMethod]
+        public void Node_Equals_xx()
+        {
+            var x = new Node<int>(10);
+            var y = new Node<int>(33);
+
+            var actual = x.Equals(x);
+
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
+        public void Node_Equals_xy_yx()
+        {
+            var x = new Node<int>(10);
+            var y = new Node<int>(33);
+
+            var actualxy = x.Equals(y);
+            var actualyx = y.Equals(x);
+
+            Assert.AreEqual(actualxy, actualyx);
+        }
+
+        [TestMethod]
+        public void Node_Equals_xyz()
+        {
+            var x = new Node<int>(10);
+            var y = new Node<int>(10);
+            var z = new Node<int>(10);
+
+            var xy = x.Equals(y);
+            var yz = y.Equals(z);
+            var xz = x.Equals(z);
+
+            Assert.IsTrue(xy);
+            Assert.IsTrue(yz);
+            Assert.IsTrue(xz);
+        }
+
+        [TestMethod]
+        public void Node_Equals_xy_xy_xy()
+        {
+            var x = new Node<int>(10);
+            var y = new Node<int>(33);
+
+            var actual1 = x.Equals(y);
+            var actual2 = x.Equals(y);
+            var actual3 = x.Equals(y);
+
+            Assert.AreEqual(actual1, actual2);
+            Assert.AreEqual(actual1, actual3);
+        }
+
+        [TestMethod]
+        public void Node_Equals_Null()
+        {
+            var x = new Node<int>(10);
+
+            var actual = x.Equals(null);
+
+            Assert.IsFalse(actual);
+        }
+        #endregion
     }
 }
