@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetHierarchy.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,11 @@ namespace NetHierarchy
     /// <summary>
     /// Represents a point on a hierarchy and defines methods to manipulate hierarchies.
     /// </summary>
-    /// <typeparam name="T">The type of data that will be sotred in the node.</typeparam>
+    /// <typeparam name="T">The type of data that will be stored in the <see cref="Node{T}"/> </typeparam>
     public class Node<T>
     {
+        #region Public Properties
+
         /// <summary>
         /// Get or set that data that belongs to the node.
         /// </summary>
@@ -43,19 +46,34 @@ namespace NetHierarchy
             get { return Parent == null; }
         }
 
+        #endregion
+
         #region Constructors
 
         #region Without Children
+
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/>. 
+        /// </summary>
         public Node()
         {
             this.Children = new List<Node<T>>();
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/>. 
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
         public Node(T Data) : this()
         {
             this.Data = Data;
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/> and create and map a parent <see cref="Node{T}"/>. 
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
+        /// <param name="Parent">The Parent <see cref="Node{T}"/> of this node.</param>
         public Node(T Data, Node<T> Parent) : this(Data)
         {
             this.Parent = Parent;
@@ -64,6 +82,11 @@ namespace NetHierarchy
                 Parent.AddChild(this);
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/> and create and map a parent <see cref="Node{T}"/>. 
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
+        /// <param name="ParentData">The data that the node's parent <see cref="Node{T}"/> will hold. A new <see cref="Node{T}"/> will be created with this value.</param>
         public Node(T Data, T ParentData) : this(Data)
         {
             var parentNode = new Node<T>(ParentData);
@@ -73,16 +96,35 @@ namespace NetHierarchy
         #endregion
 
         #region With Children
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/> and add a collection of Children under the new <see cref="Node{T}"/> .
+        /// </summary>
+        /// <param name="Children">Collection of Child nodes that belong to this node.</param>
         public Node(ICollection<Node<T>> Children)
         {
             this.Children = Children;
+            foreach (var child in this.Children)
+                if (child.Parent != this)
+                    child.Parent = this;
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/> and add a collection of Children under the new <see cref="Node{T}"/> .
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
+        /// <param name="Children">Collection of Child nodes that belong to this node.</param>
         public Node(T Data, ICollection<Node<T>> Children) : this(Children)
         {
             this.Data = Data;
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/>. Adds a collection of Children under the new <see cref="Node{T}"/>.
+        /// Adds the newly created node under an existing parent <see cref="Node{T}"/>. 
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
+        /// <param name="Children">Collection of Child nodes that belong to this node.</param>
+        /// <param name="Parent">The Parent <see cref="Node{T}"/> of this node.</param>
         public Node(T Data, ICollection<Node<T>> Children, Node<T> Parent) :this(Data, Children)
         {
             this.Parent = Parent;
@@ -90,6 +132,13 @@ namespace NetHierarchy
                 Parent.AddChild(this);
         }
 
+        /// <summary>
+        /// Initialize a new <see cref="Node{T}"/>. Adds a collection of Children under the new <see cref="Node{T}"/>.
+        /// Adds the newly created node under an existing parent <see cref="Node{T}"/>. 
+        /// </summary>
+        /// <param name="Data">The data that the node will hold.</param>
+        /// <param name="Children">Collection of Child nodes that belong to this node.</param>
+        /// <param name="Parent">The data that the node's parent <see cref="Node{T}"/> will hold. A new <see cref="Node{T}"/> will be created with this value.</param>
         public Node(T Data, ICollection<Node<T>> Children, T Parent) : this(Data, Children, new Node<T>(Parent))
         {
             
@@ -98,6 +147,7 @@ namespace NetHierarchy
 
         #endregion
 
+        #region Hierarchy Methods
         /// <summary>
         /// Add a child to this node and creates the parent/child relationship between the nodes.
         /// </summary>
@@ -108,6 +158,18 @@ namespace NetHierarchy
 
             this.Children.Add(ChildNode);
             ChildNode.Parent = this;
+        }
+
+        /// <summary>
+        /// Add a child with data to this node and create a parent/child relationship between the nodes.
+        /// </summary>
+        /// <param name="ChildData">The data that the child <see cref="Node{T}"/> will hold.</param>
+        public void AddChild(T ChildData)
+        {
+            var childNode = new Node<T>(ChildData);
+
+            this.Children.Add(childNode);
+            childNode.Parent = this;
         }
 
         /// <summary>
@@ -164,69 +226,32 @@ namespace NetHierarchy
                 return this.Parent.IsDescendantOf(Check);
             }
         }
+        #endregion
 
-        #region Linq Like Methods
-
+        #region SerializableNode Casts
         /// <summary>
-        /// Filters the descendant nodes based on a predicate.
+        /// Convert the hierarchy, starting at this node, into an object that can be serialized without circular dependency errors. 
+        /// The hierarchy under this node will be copied into a new <see cref="SerializableNode{T}"/>. 
         /// </summary>
-        public IEnumerable<Node<T>> DescendantsWhere(Func<Node<T>, bool> Predicate)
+        /// <returns>A <see cref="SerializableNode{T}"/> populated with children.</returns>
+        public SerializableNode<T> AsSerializable()
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+            var serNode = new SerializableNode<T>(this.Data);
+            foreach (var child in this.Children)
+                serNode.AddChild(child.AsSerializable());
 
-            if (Predicate(this))
-                yield return this;
-
-            foreach(var child in Children)
-            {
-                foreach(var result in child.DescendantsWhere(Predicate))
-                {
-                    yield return result;
-                }
-            }
+            return serNode;
         }
 
         /// <summary>
-        /// Determines wether any descendant satisifies a condition.
+        /// Convert the <see cref="Node{T}"/> into a <see cref="SerializableNode{T}"/>. The Parent field will be lost in this conversion.
         /// </summary>
-        /// <param name="Predicate">A function to test each decendant.</param>
-        public bool DescendantsAny(Func<Node<T>, bool> Predicate)
+        /// <param name="Node">The <see cref="Node{T}"/> to cast.</param>
+        public static explicit operator SerializableNode<T>(Node<T> Node)
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
-
-            if (Predicate(this))
-                return true;
-
-            foreach(var child in Children)
-            {
-                var result = child.DescendantsAny(Predicate);
-                if (result)
-                    return true;
-            }
-
-            return false;
+            return Node.AsSerializable();
         }
 
-        /// <summary>
-        /// Determines if the node's descendants contains the value using the default equality comparer.
-        /// </summary>
-        /// <param name="Value">The value to locate in the sequence.</param>
-        public bool DescendantsContains(T Value)
-        {
-            if (Value == null) throw new ArgumentNullException(nameof(Value));
-
-            if (this.Data.Equals(Value))
-                return true;
-
-            foreach(var child in Children)
-            {
-                var result = child.DescendantsContains(Value);
-                if (result)
-                    return true;
-            }
-
-            return false;
-        }
         #endregion
 
         #region Object Overrides
