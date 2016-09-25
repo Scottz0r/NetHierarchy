@@ -2,12 +2,123 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetHierarchy;
 using System.Linq;
+using System.Collections.Generic;
+using NetHierarchy.Serialization;
 
 namespace NetHierarchyTests
 {
     [TestClass]
     public class Node_Tests
     {
+        #region Constructors
+        [TestMethod]
+        public void Node_DefaultConstructor()
+        {
+            var node = new Node<string>();
+
+            Assert.IsNotNull(node.Children);
+            Assert.IsNull(node.Parent);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_Data()
+        {
+            var node = new Node<string>("Data");
+
+            Assert.IsNotNull(node.Children);
+            Assert.AreEqual("Data", node.Data);
+            Assert.IsNull(node.Parent);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_DataParent()
+        {
+            var parent = new Node<string>("Parent");
+            var node = new Node<string>("Data", parent);
+
+            Assert.IsNotNull(node.Children);
+            Assert.AreEqual("Data", node.Data);
+            Assert.IsNotNull(node.Parent);
+            Assert.AreEqual("Parent", node.Parent.Data);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_DataParentdata()
+        {
+            var node = new Node<string>("Data", "Parent");
+
+            Assert.IsNotNull(node.Children);
+            Assert.AreEqual("Data", node.Data);
+            Assert.IsNotNull(node.Parent);
+            Assert.AreEqual("Parent", node.Parent.Data);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_Children()
+        {
+            List<Node<string>> children = new List<Node<string>>
+            {
+                new Node<string>("Child1"),
+                new Node<string>("Child2")
+            };
+            var node = new Node<string>(children);
+
+            Assert.AreEqual(children, node.Children);
+            Assert.AreEqual(node, node.Children.First().Parent);
+            Assert.IsNull(node.Parent);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_DataChildren()
+        {
+            List<Node<string>> children = new List<Node<string>>
+            {
+                new Node<string>("Child1"),
+                new Node<string>("Child2")
+            };
+            var node = new Node<string>("Data", children);
+
+            Assert.AreEqual("Data", node.Data);
+            Assert.AreEqual(children, node.Children);
+            Assert.AreEqual(node, node.Children.First().Parent);
+            Assert.IsNull(node.Parent);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_DataChildrenParent()
+        {
+            List<Node<string>> children = new List<Node<string>>
+            {
+                new Node<string>("Child1"),
+                new Node<string>("Child2")
+            };
+            var node = new Node<string>("Data", children);
+            var parent = new Node<string>("Parent");
+            parent.AddChild(node);
+
+            Assert.AreEqual("Data", node.Data);
+            Assert.AreEqual(node.Parent, parent);
+            Assert.AreEqual(children, node.Children);
+            Assert.AreEqual(node, node.Children.First().Parent);
+        }
+
+        [TestMethod]
+        public void Node_Constructor_DataChildrenParentdata()
+        {
+            List<Node<string>> children = new List<Node<string>>
+            {
+                new Node<string>("Child1"),
+                new Node<string>("Child2")
+            };
+            var node = new Node<string>("Data", children, "Parent");
+
+            Assert.AreEqual("Data", node.Data);
+            Assert.AreEqual("Parent", node.Parent.Data);
+            Assert.AreEqual(children, node.Children);
+            Assert.AreEqual(node, node.Children.First().Parent);
+        }
+        #endregion
+
         [TestMethod]
         public void Node_IsLeaf_NoChildren()
         {
@@ -188,151 +299,44 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
-        public void Node_DescendantsWhere()
+        public void Node_ToString()
         {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
+            var node = new Node<string>("Test");
 
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
+            var actual = node.ToString();
 
-            var actual = root.DescendantsWhere(x => x.Data > 2);
-            var actualList = actual.ToList();
-
-            Assert.AreEqual(3, actualList.Count);
-            CollectionAssert.Contains(actualList, parent);
-            CollectionAssert.Contains(actualList, parent2);
-            CollectionAssert.Contains(actualList, child);
+            Assert.AreEqual("Test", actual);
         }
 
+        #region SerializableNode Methods
         [TestMethod]
-        public void Node_DescendantsWhere_NoMatch()
-        {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
-
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
-
-            var actual = root.DescendantsWhere(x => x.Data == 1337);
-            var actualList = actual.ToList();
-
-            Assert.AreEqual(0, actualList.Count);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Node_DescendantsWhere_ArgumentNull()
-        {
-            var root = new Node<int>(1);
-
-            var actual = root.DescendantsWhere(null);
-            var actualList = actual.ToList();
-        }
-
-        [TestMethod]
-        public void Node_DescendantsAny()
-        {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
-
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
-
-            var actual = root.DescendantsAny(x => x.Data == 2);
-
-            Assert.IsTrue(actual);
-        }
-
-        [TestMethod]
-        public void Node_DescendantsAny_NoMatch()
-        {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
-
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
-
-            var actual = root.DescendantsAny(x => x.Data == 1000000000);
-
-            Assert.IsFalse(actual);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Node_DescendantsAny_ArgumentNull()
-        {
-            var root = new Node<int>(1);
-
-            var actual = root.DescendantsAny(null);
-        }
-
-        [TestMethod]
-        public void Node_DescendantsContains()
-        {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
-
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
-
-            var actual = root.DescendantsContains(3);
-
-            Assert.IsTrue(actual);
-        }
-
-        [TestMethod]
-        public void Node_DescendantsContains_NotContains()
-        {
-            var root = new Node<int>(1);
-            var grandparent = new Node<int>(2);
-            var parent = new Node<int>(3);
-            var parent2 = new Node<int>(4);
-            var child = new Node<int>(5);
-
-            root.AddChild(grandparent);
-            grandparent.AddChild(parent);
-            grandparent.AddChild(parent2);
-            parent.AddChild(child);
-
-            var actual = root.DescendantsContains(13333337);
-
-            Assert.IsFalse(actual);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Node_DescendantsContains_ArgumentNull()
+        public void Node_AsSerializable()
         {
             var root = new Node<string>("ASDF");
+            var child = new Node<string>("Child");
+            root.AddChild(child);
 
-            root.DescendantsContains(null);
+            var actual = root.AsSerializable();
+
+            Assert.AreEqual(1, root.Children.Count);
+            Assert.AreEqual("ASDF", actual.Data);
+            Assert.AreEqual("Child", actual.Children.First().Data);
         }
+
+        [TestMethod]
+        public void Node_Cast_SerializableNode()
+        {
+            var root = new Node<string>("ASDF");
+            var child = new Node<string>("Child");
+            root.AddChild(child);
+
+            var actual = (SerializableNode<string>)root;
+
+            Assert.AreEqual(1, root.Children.Count);
+            Assert.AreEqual("ASDF", actual.Data);
+            Assert.AreEqual("Child", actual.Children.First().Data);
+        }
+        #endregion
 
         #region Equals Tests
         [TestMethod]
