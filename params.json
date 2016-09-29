@@ -1,0 +1,6 @@
+{
+  "name": "NetHierarchy",
+  "tagline": "Hierarchy Library for .Net",
+  "body": "NetHierarchy\r\n-----------------------------\r\nHierarchies suck. There is no native C# collection for hierarchies. NetHierarchy attempts to relieve some of the pains of working with hierarchies by implementing common hierarchy tasks and LINQ like functions to access data in a hierarchy.\r\n\r\nHow to Get It\r\n-----------------------------\r\nYou can find this package on [NuGet](https://www.nuget.org/packages/NetHierarchy/). Install NetHierarchy with:\r\n\r\n\tPM> Install-Package NetHierarchy\r\n\r\nGetting Started\r\n-----------------------------\r\nRead the [Quick Start Guide](https://github.com/Scottz0r/NetHierarchy/wiki/Quick-Start) to get started using NetHierarchy.\r\n\r\nNetHierarchy Copyright © 2016 Scott Clewell and other contributors under the [MIT license](LICENSE.txt).\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
