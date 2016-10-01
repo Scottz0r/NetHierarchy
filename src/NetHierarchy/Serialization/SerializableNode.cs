@@ -49,6 +49,7 @@ namespace NetHierarchy.Serialization
         /// <param name="Children">An <see cref="ICollection{T}"/> of <see cref="SerializableNode{T}"/> that are children to this node.</param>
         public SerializableNode(T Data, List<SerializableNode<T>> Children)
         {
+            Children.ArgumentNullCheck(nameof(Children));
             this.Data = Data;
             this.Children = Children;
         }
@@ -62,8 +63,34 @@ namespace NetHierarchy.Serialization
         /// <param name="ChildNode">The child node to add.</param>
         public void AddChild(SerializableNode<T> ChildNode)
         {
+            ChildNode.ArgumentNullCheck(nameof(ChildNode));
+
             this.Children.Add(ChildNode);
         }
+
+        /// <summary>
+        /// Add a child <see cref="SerializableNode{T}"/> with given data under the current node.
+        /// </summary>
+        /// <param name="ChildData">That data that the child <see cref="SerializableNode{T}"/> will contain.</param>
+        public void AddChild(T ChildData)
+        {
+            this.Children.Add(new SerializableNode<T>(ChildData));
+        }
+
+        /// <summary>
+        /// Add a collection of <see cref="SerializableNode{T}"/> under the current node.
+        /// </summary>
+        /// <param name="ChildNodes">A collection of children to add.</param>
+        public void AddChild(params SerializableNode<T>[] ChildNodes)
+        {
+            ChildNodes.ArgumentNullCheck(nameof(ChildNodes));
+
+            foreach(var child in ChildNodes)
+            {
+                this.Children.Add(child);
+            }
+        }
+
         #endregion
 
         #region Cast Methods
@@ -92,6 +119,9 @@ namespace NetHierarchy.Serialization
         #endregion
 
         #region Object Overrides
+        /// <summary>
+        /// Returns a string representation of the object.
+        /// </summary>
         public override string ToString()
         {
             return this.Data.ToString();

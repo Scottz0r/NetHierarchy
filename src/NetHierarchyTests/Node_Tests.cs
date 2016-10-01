@@ -163,6 +163,27 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        public void Node_AddChild_Data()
+        {
+            var node = new Node<int>(1);
+
+            node.AddChild(1);
+
+            Assert.AreEqual(1, node.Children.ElementAt(0).Data);
+        }
+
+        [TestMethod]
+        public void Node_AddChild_Params()
+        {
+            var node = new Node<int>(123);
+
+            node.AddChild(new Node<int>(1), new Node<int>(2), new Node<int>(3));
+
+            Assert.AreEqual(3, node.Children.Count);
+            Assert.AreEqual(1, node.Children.ElementAt(0).Data);
+        }
+
+        [TestMethod]
         public void Node_GetDescendants()
         {
             var root = new Node<string>("Root");
@@ -335,6 +356,16 @@ namespace NetHierarchyTests
             Assert.AreEqual(1, root.Children.Count);
             Assert.AreEqual("ASDF", actual.Data);
             Assert.AreEqual("Child", actual.Children.First().Data);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void Node_Cast_SerializableNode_Null()
+        {
+            Node<string> node = null;
+
+            var actual = (SerializableNode<string>)node;
+
         }
         #endregion
 

@@ -14,10 +14,12 @@ namespace NetHierarchy
         /// <summary>
         /// Filters the descendant nodes based on a predicate.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Predicate">A function to test each descendant for a condition.</param>
         public static IEnumerable<Node<T>> DescendantsWhere<T>(this Node<T> node, Func<Node<T>, bool> Predicate)
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+            node.ArgumentNullCheck(nameof(node));
+            Predicate.ArgumentNullCheck(nameof(Predicate));
 
             if (Predicate(node))
                 yield return node;
@@ -34,10 +36,12 @@ namespace NetHierarchy
         /// <summary>
         /// Determines whether any descendant satisfies a condition.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Predicate">A function to test each descendant.</param>
         public static bool DescendantsAny<T>(this Node<T> node, Func<Node<T>, bool> Predicate)
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+            node.ArgumentNullCheck(nameof(node));
+            Predicate.ArgumentNullCheck(nameof(Predicate));
 
             if (Predicate(node))
                 return true;
@@ -55,9 +59,11 @@ namespace NetHierarchy
         /// <summary>
         /// Determines if the node's descendants contains the value using the default equality comparer.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Value">The value to locate in the sequence.</param>
         public static bool DescendantsContains<T>(this Node<T> node, T Value)
         {
+            node.ArgumentNullCheck(nameof(node));
             if (Value == null) return false;
 
             if (node.Data.Equals(Value))
@@ -76,10 +82,12 @@ namespace NetHierarchy
         /// <summary>
         /// Filters the parent nodes based on a predicate.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Predicate">A function to test each parent for a condition.</param>
         public static IEnumerable<Node<T>> ParentsWhere<T>(this Node<T> node, Func<Node<T>, bool> Predicate)
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+            node.ArgumentNullCheck(nameof(node));
+            Predicate.ArgumentNullCheck(nameof(Predicate));
 
             if (node.Parent == null)
                 yield break;
@@ -94,18 +102,22 @@ namespace NetHierarchy
         /// <summary>
         /// Determines if a node's parents contains any value.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         public static bool ParentsAny<T>(this Node<T> node)
         {
+            node.ArgumentNullCheck(nameof(node));
             return node.Parent != null;
         }
 
         /// <summary>
         /// Determines whether any parent satisfies a condition.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Predicate">A function to test each parent.</param>
         public static bool ParentsAny<T>(this Node<T> node, Func<Node<T>, bool> Predicate)
         {
-            if (Predicate == null) throw new ArgumentNullException(nameof(Predicate));
+            node.ArgumentNullCheck(nameof(node));
+            Predicate.ArgumentNullCheck(nameof(Predicate));
 
             if (node.Parent == null)
                 return false;
@@ -119,9 +131,11 @@ namespace NetHierarchy
         /// <summary>
         /// Determines if the node's parents contains the value using the default equality comparer.
         /// </summary>
+        /// <param name="node">The <see cref="Node{T}"/> to act upon.</param>
         /// <param name="Value">The value to locate in the sequence.</param>
         public static bool ParentsContains<T>(this Node<T> node, T Value)
         {
+            node.ArgumentNullCheck(nameof(node));
             if (Value == null) return false;
 
             if (node.Parent == null)

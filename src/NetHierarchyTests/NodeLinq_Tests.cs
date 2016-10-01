@@ -9,6 +9,15 @@ namespace NetHierarchyTests
     public class NodeLinq_Tests
     {
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void NodeLinq_NodeNullCheck()
+        {
+            Node<int> node = null;
+
+            node.DescendantsWhere(x => x.Data == 1).ToList();
+        }
+
+        [TestMethod]
         public void NodeLinq_DescendantsWhere()
         {
             var root = new Node<int>(1);
