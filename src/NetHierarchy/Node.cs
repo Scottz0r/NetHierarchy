@@ -102,6 +102,7 @@ namespace NetHierarchy
         /// <param name="Children">Collection of Child nodes that belong to this node.</param>
         public Node(ICollection<Node<T>> Children)
         {
+            Children.ArgumentNullCheck(nameof(Children));
             this.Children = Children;
             foreach (var child in this.Children)
                 if (child.Parent != this)
@@ -154,7 +155,7 @@ namespace NetHierarchy
         /// <param name="ChildNode">The child item to add.</param>
         public void AddChild(Node<T> ChildNode)
         {
-            if (ChildNode == null) throw new ArgumentNullException(nameof(ChildNode));
+            ChildNode.ArgumentNullCheck(nameof(ChildNode));
 
             this.Children.Add(ChildNode);
             ChildNode.Parent = this;
@@ -170,6 +171,21 @@ namespace NetHierarchy
 
             this.Children.Add(childNode);
             childNode.Parent = this;
+        }
+
+        /// <summary>
+        /// Add a collection of children to this node and create a parent/child relationship between the nodes.
+        /// </summary>
+        /// <param name="ChildNodes">A collection of <see cref="Node{T}"/> to add.</param>
+        public void AddChild(params Node<T>[] ChildNodes)
+        {
+            ChildNodes.ArgumentNullCheck(nameof(ChildNodes));
+
+            foreach(var node in ChildNodes)
+            {
+                this.Children.Add(node);
+                node.Parent = this;
+            }
         }
 
         /// <summary>
@@ -209,7 +225,7 @@ namespace NetHierarchy
         /// <param name="Check">The <see cref="Node{T}"/> to check under.</param>
         public bool IsDescendantOf(Node<T> Check)
         {
-            if (Check == null) throw new ArgumentNullException(nameof(Check));
+            Check.ArgumentNullCheck(nameof(Check));
 
             //No parent then it is not a descendant of anything.
             if (this.Parent == null)
@@ -255,11 +271,17 @@ namespace NetHierarchy
         #endregion
 
         #region Object Overrides
+        /// <summary>
+        /// Returns a string that represents the object.
+        /// </summary>
         public override string ToString()
         {
             return this.Data.ToString();
         }
 
+        /// <summary>
+        /// Determines if the supplied object is equal to the current object.
+        /// </summary>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -272,6 +294,9 @@ namespace NetHierarchy
             return this.Data.Equals(n.Data);
         }
 
+        /// <summary>
+        /// Returns the hash code of the Node's data.
+        /// </summary>
         public override int GetHashCode()
         {
             return this.Data.GetHashCode();

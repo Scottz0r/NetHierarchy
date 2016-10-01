@@ -54,6 +54,27 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        public void SerializableNode_AddChild_Data()
+        {
+            var node = new SerializableNode<int>(1);
+
+            node.AddChild(1);
+
+            Assert.AreEqual(1, node.Children.ElementAt(0).Data);
+        }
+
+        [TestMethod]
+        public void SerializableNode_AddChild_Params()
+        {
+            var node = new SerializableNode<int>(2);
+
+            node.AddChild(new SerializableNode<int>(1), new SerializableNode<int>(23));
+
+            Assert.AreEqual(2, node.Children.Count);
+            Assert.AreEqual(1, node.Children.ElementAt(0).Data);
+        }
+
+        [TestMethod]
         public void SerializableNode_AsNode()
         {
             var node = new SerializableNode<string>("Parent");
