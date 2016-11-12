@@ -11,7 +11,7 @@
     <description>Hierarchy library. Allows for the management of parent/child hierarchies with the Node class. Implements LINQ like methods to traverse hierarchies.</description>
 	<summary>Hierarchy object library.</summary>
     <copyright>Copyright 2016</copyright>
-    <tags>hierarchy</tags>
+    <tags>hierarchy tree</tags>
 	<dependencies>
 		<group targetFramework=".NETFramework4.5" />
 	</dependencies>

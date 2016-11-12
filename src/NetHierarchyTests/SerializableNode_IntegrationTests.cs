@@ -14,6 +14,7 @@ namespace NetHierarchyTests
     public class SerializableNode_IntegrationTests
     {
         [TestMethod]
+        [TestCategory("Integration")]
         public void SerialableNode_XmlSerialization()
         {
             var root = new SerializableNode<string>("Root");
@@ -32,6 +33,7 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void SerializableNode_XmlDeserialization()
         {
             var root = new SerializableNode<string>("Root");
@@ -55,6 +57,7 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void SerializableNode_JsonSerialize()
         {
             var root = new SerializableNode<string>("Root");
@@ -65,6 +68,7 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void SerializableNode_JsonDesearilized()
         {
             var root = new SerializableNode<string>("Root");
@@ -77,6 +81,7 @@ namespace NetHierarchyTests
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void Node_ToSerializableIntegration()
         {
             var root = new Node<int>(1);

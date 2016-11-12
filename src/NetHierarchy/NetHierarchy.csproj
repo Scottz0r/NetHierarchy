@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers.cs" />
+    <Compile Include="HierarchyBuilder.cs" />
+    <Compile Include="HierarchyBuilderException.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NodeLinq.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
