@@ -269,5 +269,20 @@ namespace NetHierarchyTests
         }
 
         #endregion
+
+        #region Stress Tests
+
+        //Stress the builder method to see if it can handle large data sets.
+        [TestMethod]
+        [TestCategory("Stress")]
+        public void HierarchyBuilder_StressTest()
+        {
+            var data = Enumerable.Range(1, 1000000)
+                .Select(x => Tuple.Create(x, x != 1 ? (x / 10) + 1 : -1)).ToList();
+
+            var root = HierarchyBuilder.GenerateHierarchy(data, x => x.Item1, x => x.Item2, -1);
+        }
+
+        #endregion
     }
 }
