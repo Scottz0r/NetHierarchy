@@ -62,6 +62,7 @@
     <Compile Include="NodeLinq_Tests.cs" />
     <Compile Include="SerializableNode_Tests.cs" />
     <Compile Include="SerializableNode_IntegrationTests.cs" />
+    <Compile Include="HierarchyBuilder_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetHierarchy\NetHierarchy.csproj">
