@@ -44,6 +44,10 @@ namespace NetHierarchy
         public static Node<T> GenerateHierarchy<T, TKey>(IEnumerable<T> collection, Func<T, TKey> primaryKey, Func<T, TKey> parentKey, TKey rootParentValue)
             where T: class
         {
+            collection.ArgumentNullCheck(nameof(collection));
+            primaryKey.ArgumentNullCheck(nameof(primaryKey));
+            parentKey.ArgumentNullCheck(nameof(parentKey));
+
             var groups = collection.GroupBy(x => parentKey(x));
 
             //Get all elements with a null primary key.
@@ -97,6 +101,10 @@ namespace NetHierarchy
         /// <returns>Returns an <see cref="Enumerable"/> collection of root nodes populated from the input collection.</returns>
         public static IEnumerable<Node<T>> GenerateHierarchies<T, TKey>(IEnumerable<T> collection, Func<T, TKey> primaryKey, Func<T, TKey> parentKey, TKey rootParentValue)
         {
+            collection.ArgumentNullCheck(nameof(collection));
+            primaryKey.ArgumentNullCheck(nameof(primaryKey));
+            parentKey.ArgumentNullCheck(nameof(parentKey));
+
             var groups = collection.GroupBy(x => parentKey(x));
 
             //Get all elements with a null primary key.

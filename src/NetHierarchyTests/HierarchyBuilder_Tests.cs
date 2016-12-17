@@ -284,5 +284,57 @@ namespace NetHierarchyTests
         }
 
         #endregion
+
+        #region Argument NullTests
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchy_CollectionNull()
+        {
+            var actual = HierarchyBuilder.GenerateHierarchy<TestData, int?>(null, x => x.Id, x => x.ParentId, -1337);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchy_PrimaryKeyNull()
+        {
+            var data = new List<TestData>();
+
+            var actual = HierarchyBuilder.GenerateHierarchy(data, null, x => x.ParentId, -1337);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchy_ParentKeyNulll()
+        {
+            var data = new List<TestData>();
+
+            var actual = HierarchyBuilder.GenerateHierarchy(data, x => x.Id, null, -1337);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchies_CollectionNull()
+        {
+            var actual = HierarchyBuilder.GenerateHierarchies<TestData, int?>(null, x => x.Id, x => x.ParentId, -1337).ToList();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchies_PrimaryKeyNull()
+        {
+            var data = new List<TestData>();
+
+            var actual = HierarchyBuilder.GenerateHierarchies(data, null, x => x.ParentId, -1337).ToList();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void HierarchyBuilder_GenerateHierarchies_ParentKeyNulll()
+        {
+            var data = new List<TestData>();
+
+            var actual = HierarchyBuilder.GenerateHierarchies(data, x => x.Id, null, -1337).ToList();
+        }
+        #endregion
     }
 }
