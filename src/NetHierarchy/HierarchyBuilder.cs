@@ -51,7 +51,7 @@ namespace NetHierarchy
             var groups = collection.GroupBy(x => parentKey(x));
 
             //Get all elements with a null primary key.
-            var root = groups.FirstOrDefault(x => x.Key.Equals(rootParentValue));
+            var root = groups.FirstOrDefault(x => EqualityComparer<TKey>.Default.Equals(x.Key, rootParentValue));
             if(root == null)
             {
                 throw new HierarchyBuilderException("A root node was not found in the collection.");
@@ -108,7 +108,7 @@ namespace NetHierarchy
             var groups = collection.GroupBy(x => parentKey(x));
 
             //Get all elements with a null primary key.
-            var roots = groups.FirstOrDefault(x => x.Key.Equals(rootParentValue));
+            var roots = groups.FirstOrDefault(x => EqualityComparer<TKey>.Default.Equals(x.Key, rootParentValue));
             if (roots == null)
             {
                 throw new HierarchyBuilderException("A root node was not found in the collection.");

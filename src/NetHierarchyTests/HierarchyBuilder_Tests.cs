@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetHierarchy;
 using System.Collections.Generic;
 using System.Linq;
+using System.Dynamic;
 
 namespace NetHierarchyTests
 {
@@ -334,6 +335,24 @@ namespace NetHierarchyTests
             var data = new List<TestData>();
 
             var actual = HierarchyBuilder.GenerateHierarchies(data, x => x.Id, null, -1337).ToList();
+        }
+        #endregion
+
+        #region Dynamic Tests
+        [TestMethod]
+        public void HierarchyBuilder_Dynamic()
+        {
+            dynamic rootData = new ExpandoObject();
+            rootData.Id = 1;
+            rootData.PId = null;
+            dynamic childData = new ExpandoObject();
+            childData.Id = 2;
+            childData.PId = 1;
+            var input = new List<dynamic> { rootData, childData };
+
+            var actual = HierarchyBuilder.GenerateHierarchy(input, x => x.Id, x => x.PId, null);
+
+            Assert.AreEqual(1, actual.Data.Id);
         }
         #endregion
     }
