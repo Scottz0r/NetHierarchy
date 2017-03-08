@@ -1,12 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Linq;
 using System.Xml.Serialization;
-using NetHierarchy.Serialization;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using NetHierarchy;
+using NetHierarchy.Serialization;
 
 namespace NetHierarchyTests
 {
