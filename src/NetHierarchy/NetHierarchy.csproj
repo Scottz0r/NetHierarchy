@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;net452;net461</TargetFrameworks>
-    <Version>2.0.1-alpha</Version>
+    <Version>2.0.1</Version>
     <Authors>Scott Clewell</Authors>
     <Company></Company>
     <Description>Hierarchy/unbalanced tree library. Allows for the management of parent/child hierarchies with the Node class. Implements LINQ like methods to traverse hierarchies.</Description>
@@ -13,7 +13,7 @@
     <PackageTags>hierarchy tree</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Copyright>Copyright 2017</Copyright>
-    <PackageReleaseNotes>Netstandard 1.0 alpha release.</PackageReleaseNotes>
+    <PackageReleaseNotes>Netstandard 1.0 release. Now targets net 4.5.2, 4.6.1, and NetStandard 1.0.</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
