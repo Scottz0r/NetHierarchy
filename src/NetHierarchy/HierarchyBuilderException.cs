@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace NetHierarchy
 {
-    [Serializable]
     public class HierarchyBuilderException : Exception
     {
         public HierarchyBuilderException()
@@ -15,10 +13,6 @@ namespace NetHierarchy
         }
 
         public HierarchyBuilderException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected HierarchyBuilderException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
