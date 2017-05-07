@@ -1,0 +1,20 @@
+version: NetHierarchy_{branch}_{build}
+image: Visual Studio 2017
+configuration: Release
+init:
+- ps: Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_BRANCH.$(Get-Date -format yyyy.MM.dd.ss)"
+build_script:
+- cmd: >-
+    cd src
+
+    dotnet restore
+
+    dotnet test NetHierarchyTests\NetHierarchyTests.csproj
+
+    dotnet build -c release
+
+    dotnet pack NetHierarchy\NetHierarchy.csproj -o ..\
+test: off
+artifacts:
+- path: src/NetHierarchy.*.nupkg
+  name: NugetPackage
